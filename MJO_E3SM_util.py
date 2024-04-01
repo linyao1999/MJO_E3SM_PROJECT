@@ -1309,20 +1309,6 @@ def get_local_MSE_budget(ds, lat_lim=50, plim=100, latmean=False, iceflg=False):
     raw_dtmse = dtmse_sel.sel(lev=slice(plim,None))
     mse_budget['dyn'] = raw_dtmse * 86400
 
-    # dtmse_sel = (get_local_MSE_source(ds,'DDSE_CEF',lat_lim=lat_lim).load().copy() 
-    #              + get_local_MSE_source(ds,'DQLV_CEF',lat_lim=lat_lim).load()) 
-    # raw_dtmse = dtmse_sel.sel(lev=slice(plim,None)).mean(['lat'])  # [lev, lon]
-    # mse_budget['cef'] = raw_dtmse * 86400
-
-    # dtmse_sel = get_local_MSE_source(ds,'DDSE_GWD',lat_lim=lat_lim).load().copy() 
-    # raw_dtmse = dtmse_sel.sel(lev=slice(plim,None)).mean(['lat'])  # [lev, lon]
-    # mse_budget['gwd'] = raw_dtmse * 86400
-    # resi = mse_budget['tendency'] - mse_budget['crmpbl'] - mse_budget['qr'] - mse_budget['dyn'] - mse_budget['gwd'] - mse_budget['cef']
-    
-    # resi = mse_budget['tendency'] - mse_budget['crmpbl'] - mse_budget['qr'] - mse_budget['dyn']
-    # resi = mse_budget['tendency'] - mse_budget['crm'] - mse_budget['pbl'] - mse_budget['qr'] - mse_budget['dyn']
-    # mse_budget['resi'] = resi
-
     return mse_budget
 
 def get_local_MSE_budget_sep(ds, lat_lim=50, plim=100, latmean=False, iceflg=False):

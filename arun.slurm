@@ -8,7 +8,7 @@
 #SBATCH -t 10:00:00
 #SBATCH --output=outlog/%j.out
 
-echo "run ${case_dir} ${lat_lim} ${kmax} ${Tlow} ${Thig}"
-python3 get_uncertainty.py
+echo "run ${case_dir}"
+python3 MJO_E3SM_local_MSE_budget.py
 
 wait

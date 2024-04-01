@@ -3,8 +3,7 @@
 for case_dir in "control" "FIX_QRT" "GBL_QRT"
 do 
     export case_dir
-    python3 get_horizontal_composite.py
-    python3 get_horizontal_composite1.py
+    sbatch arun.slurm
     
 done
 
