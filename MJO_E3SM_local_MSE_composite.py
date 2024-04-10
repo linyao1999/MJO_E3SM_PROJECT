@@ -3,7 +3,6 @@ import xarray as xr
 import MJO_E3SM_util as mjo
 import pandas as pd 
 import matplotlib.pyplot as plt 
-import pickle
 import glob
 import os 
 
@@ -11,7 +10,7 @@ import os
 # The composites are based on Ma's paper
 
 # directory that stores all case data
-dirn = '/pscratch/sd/l/linyaoly/MJO_E3SM/regridded_data/'
+dirn = '/pscratch/sd/l/linyaoly/MJO_E3SM_data/regridded_data/'
 # specify which case we use
 case_dir = os.environ['case_dir']
 
@@ -46,23 +45,28 @@ olrflt = mjo.get_MJO_signal(olravg, d=1, kmin=1, kmax=kmax, flow=1.0/Tlow, fhig=
 olrmin = olrflt.argmin(dim='lon')
 print('olrmin calculated')
 
-# calculate the MSE budget, sperate T and Q
-mse_budget = mjo.get_local_MSE_budget_sep(ds, lat_lim=lat_lim, plim=100, latmean=True)
+# load local MSE budget local_MSE_budget_'+case_dir+'.nc'  
 
-# Write to a JSON file MJO_E3SM/regridded_data/analysis/local_MSE_budget
-with open(dirn+'analysis/local_MSE_budget/local_MSE_budget_'+case_dir+'_latavg_septq'+flg+'.json', 'wb') as file:
-    pickle.dump(mse_budget, file)
+mse_budget = xr.open_dataset(dirn+'analysis/local_MSE_budget/local_MSE_budget_'+case_dir+'.nc').sel(time=olr.time)
 
-print('budget saved')
+# comp = mjo.get_local_MSE_budget_composite(mse_budget, olrmin)
 
-# mse_budget = pickle.load(open(dirn+'analysis/local_MSE_budget/local_MSE_budget_'+case_dir+'_latavg_septq.json', 'rb'))
+comp = {}
 
-comp = mjo.get_local_MSE_budget_composite(mse_budget, olrmin)
+for key in list(mse_budget.data_vars.keys()):
+    mse = mse_budget[key]  # [time, lev, lat, lon]
+    mse_ano = mse - mse.mean(dim='lon')  # zonal anomaly
+    mse_sft = mse_ano.copy()
 
-# Write to a JSON file MJO_E3SM/regridded_data/analysis/local_MSE_budget
-with open(dirn+'analysis/local_MSE_budget/local_MSE_budget_composite_'+case_dir+'_latavg_septq'+flg+'.json', 'wb') as file:
-    pickle.dump(comp, file)
+    for i in range(olrmin.size):
+        mse_sft[i,:,:,:] = np.roll(mse_ano[i, :, :, :], shift=90-olrmin[i], axis=-1)
+    
+    comp[key] = mse_sft.mean(dim='time')  # [lev, lat, lon]
+    print(key)
 
-# comp is a list of 4
-# store the composite
+output_path = dirn+'analysis/local_MSE_budget/composite_local_MSE_budget_'+case_dir+flg+'.nc'  
 
+composite = xr.Dataset(comp)
+composite.to_netcdf(output_path)
+
+print('Budget saved. Output path:', output_path)
