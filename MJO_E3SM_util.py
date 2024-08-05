@@ -2038,7 +2038,7 @@ def get_local_MSE_budget_composite(mse_budget, olrmin):
 # draw Hovmoller diagrams
 def get_hovmoller(case_dir='control', daya=0, dayb=1500, figsize=(7,8)):
 
-    dirn = '/pscratch/sd/l/linyaoly/MJO_E3SM/regridded_data/'
+    dirn = '/pscratch/sd/l/linyaoly/MJO_E3SM_data/regridded_data/'
 
     dspw = xr.open_dataset(dirn+'analysis/hovmoller_pw_'+case_dir+'.nc')
     pwavg = dspw['pw_raw']
@@ -2193,7 +2193,7 @@ def get_hovmoller(case_dir='control', daya=0, dayb=1500, figsize=(7,8)):
 
 def get_hovmoller_olr(case_dir='control', daya=0, dayb=1500, figsize=(7,8)):
 
-    dirn = '/pscratch/sd/l/linyaoly/MJO_E3SM/regridded_data/'
+    dirn = '/pscratch/sd/l/linyaoly/MJO_E3SM_data/regridded_data/'
 
     # OLR 
     dsprep = xr.open_dataset(dirn+'analysis/hovmoller_olr_'+case_dir+'.nc')
@@ -2210,7 +2210,7 @@ def get_hovmoller_olr(case_dir='control', daya=0, dayb=1500, figsize=(7,8)):
     vmin = -75
     vmax = 75
 
-    im = ax.contourf(prepavg[daya:dayb,:].coords['lon'], prepavg[daya:dayb,:].coords['time']-prepavg[daya,:].coords['time'], data, cmap='RdBu_r', levels=np.linspace(vmin,vmax,31)) # np.linspace(-10,10,51))
+    im = ax.contourf(prepavg[daya:dayb,:].coords['lon'], prepavg[daya:dayb,:].coords['time']-prepavg[0,:].coords['time'], data, cmap='RdBu_r', levels=np.linspace(vmin,vmax,31)) # np.linspace(-10,10,51))
 
     # Add a colorbar
     cbar = plt.colorbar(im, ax=ax, pad=0.04)
@@ -2218,6 +2218,7 @@ def get_hovmoller_olr(case_dir='control', daya=0, dayb=1500, figsize=(7,8)):
     ax.tick_params(axis='both', labelsize=ftsize, which='major', length=10, width=1.5)
     ax.invert_yaxis()
     ax.set_xticks(np.arange(0, 361, 90))
+    # ax.set_yticks(np.linspace(daya, dayb, 200))
     # Show the plot
     plt.savefig('./plots/hovmoller_'+case_dir+'_unfiltered_olr.png', bbox_inches='tight')
 

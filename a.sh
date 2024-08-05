@@ -1,6 +1,7 @@
 #!/bin/bash
 
-for case_dir in "control" "FIX_QRT" "GBL_QRT"
+
+for case_dir in "GBL_QRT"
 do 
     export case_dir
     sbatch arun.slurm
@@ -8,6 +9,15 @@ do
 done
 
 wait 
+
+# for case_dir in "control" "FIX_QRT" "GBL_QRT"
+# do 
+#     export case_dir
+#     sbatch arun.slurm
+    
+# done
+
+# wait 
 
 # for case_dir in "control" "FIX_QRT" "GBL_QRT" 
 # do 
